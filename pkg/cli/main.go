@@ -13,7 +13,7 @@ type MainConfig struct {
 func Main() *cobra.Command {
 	var flags MainConfig
 	var cmd = &cobra.Command{
-		Use: "command",
+		Use: "flex",
 		Run: func(cmd *cobra.Command, args []string) {
 
 		},
