@@ -56,15 +56,11 @@ func extractStructsFromAST(AST ast.Node) map[string]StructReflex {
 		if !isTypeSpec {
 			return true
 		}
-		var structSpec, isStructSpec = typeSpec.Type.(*ast.StructType)
+		var _, isStructSpec = typeSpec.Type.(*ast.StructType)
 		if !isStructSpec {
 			return true
 		}
-		structs[typeSpec.Name.Name] = StructReflex{
-			Comments:   commentsFromAST(typeSpec.Doc.List),
-			typeSpec:   typeSpec,
-			structSpec: structSpec,
-		}
+		structs[typeSpec.Name.Name] = StructReflexFromAST(typeSpec)
 		return true
 	})
 	return structs
