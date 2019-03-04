@@ -19,12 +19,15 @@ func StructReflexFromAST(typeSpec *ast.TypeSpec) StructReflex {
 	var structSpec = typeSpec.Type.(*ast.StructType)
 	for _, field := range structSpec.Fields.List {
 		for _, name := range field.Names {
-			fields = append(fields, Field{
-				Name:     name.Name,
-				TypeName: "TODO!",
-				Comments: commentsFromAST(field.Doc.List),
-				Tag:      reflect.StructTag(field.Tag.Value),
-			})
+			if FieldIsExported(name.Name) {
+				// TODO: (ninedraft) Add type extraction and put type info to TypeNameField
+				fields = append(fields, Field{
+					Name:     name.Name,
+					TypeName: "TODO!",
+					Comments: commentsFromAST(field.Doc.List),
+					Tag:      reflect.StructTag(field.Tag.Value),
+				})
+			}
 		}
 	}
 	return StructReflex{
@@ -45,17 +48,15 @@ func (structReflex StructReflex) Name() string {
 	return structReflex.typeSpec.Name.Name
 }
 
-func (structReflex StructReflex) ForEachExportedField(walker func(field *ast.Field)) {
+func (structReflex StructReflex) ForEachField(walker func(field *ast.Field)) {
 	for _, field := range structReflex.structSpec.Fields.List {
-		if FieldIsExported(field.Names[0].Name) {
-			walker(field)
-		}
+		walker(field)
 	}
 }
 
 func (structReflex StructReflex) ExportedFieldNum() int {
 	var n int
-	structReflex.ForEachExportedField(func(field *ast.Field) {
+	structReflex.ForEachField(func(field *ast.Field) {
 		n++
 	})
 	return n
@@ -63,8 +64,7 @@ func (structReflex StructReflex) ExportedFieldNum() int {
 
 func (structReflex StructReflex) ExportedFieldNames() []string {
 	var names []string
-	structReflex.ForEachExportedField(func(field *ast.Field) {
-
+	structReflex.ForEachField(func(field *ast.Field) {
 		names = append(names, field.Names[0].Name)
 	})
 	return names
