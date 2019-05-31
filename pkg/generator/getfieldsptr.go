@@ -9,7 +9,8 @@ import (
 
 func (gen Generator) GenerateGetFieldPtr() *Statement {
 	var methodName = gen.methodName("getFieldPtr")
-	var doc = Commentf("%s returns field pointer by name. Panics if field not found or field is an interface", methodName).Line()
+	var doc = Commentf("%s returns field pointer by name. Panics if field not found.\n"+
+		"If field is nil and not an interface, then allocates value of corresponding type, assignes it to field and returns pointer to it.", methodName).Line()
 	// (name string)
 	var args = Id("name").String()
 	// func(reciever Type) GetFieldPtr() interface{}
@@ -27,9 +28,7 @@ func (gen Generator) GenerateGetFieldPtr() *Statement {
 					Add(fieldLiteral().Op("=").New(Id(field.Type))),
 				).Line().Return(fieldLiteral())
 			case reflect.Interface:
-				var panicMsg = fmt.Sprintf("[%s.%s]: unable to return pointer to field %q: it's an interface %q",
-					gen.Spec.Name, methodName, field.Name, field.Type)
-				st.Panic(Lit(panicMsg))
+				st.Return(Op("&").Add(fieldLiteral()))
 			default:
 				st.Return(fieldLiteral())
 			}
