@@ -19,6 +19,7 @@ func (gen Generator) MethodGenerators() map[string]func() *Statement {
 		"GetFieldNames": gen.GenerateGetFieldNames,
 		"FieldsN":       gen.GenerateFieldsN,
 		"GetField":      gen.GenerateGetField,
+		"GetFieldPtr":   gen.GenerateGetFieldPtr,
 	}
 }
 
