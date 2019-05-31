@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/printer"
 	"go/token"
+	"reflect"
 )
 
 type Spec struct {
@@ -63,6 +64,7 @@ func (spec Spec) FieldNames() []string {
 type StructField struct {
 	Name   string
 	Type   string
+	Kind   reflect.Kind
 	Tag    map[string][]string
 	RawTag string
 	AST    ast.Node
